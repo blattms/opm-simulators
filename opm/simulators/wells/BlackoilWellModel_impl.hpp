@@ -1690,8 +1690,8 @@ namespace Opm {
                 if (param_.solve_welleq_initially_) {
                     well->solveWellEquation(ebosSimulator_, this->wellState(), this->groupState(), deferred_logger);
                 }
-
-             }  // end of for (const auto& well : well_container_)
+            }  // end of for (const auto& well : well_container_)
+            updateWellControls(deferredLogger, /* check group controls */ false);
             updatePrimaryVariables(deferred_logger);
         } catch (const std::runtime_error& e) {
             exc_type = ExceptionType::RUNTIME_ERROR;
