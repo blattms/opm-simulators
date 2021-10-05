@@ -297,13 +297,19 @@ public:
      */
     int compressedIndex(int cartesianCellIdx) const
     {
-        auto index_pair = cartesianToCompressed_.find(cartesianCellIdx);
-        if (index_pair!=cartesianToCompressed_.end())
-            return index_pair->second;
-        else
-            return -1;
+        return cartesianToCompressedMapper()(cartesianCellIdx);
     }
 
+    std::function<int(int)> cartesianToCompressedMapper() const
+    {
+        return [this](int cartesianCellIdx){
+                   auto index_pair = this->cartesianToCompressed_.find(cartesianCellIdx);
+                   if (index_pair != this->cartesianToCompressed_.end())
+                       return index_pair->second;
+                   else
+                       return -1;
+               };
+    }
     /*!
      * \brief Extract Cartesian index triplet (i,j,k) of an active cell.
      *
