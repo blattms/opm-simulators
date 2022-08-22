@@ -19,6 +19,7 @@
 */
 
 #include <config.h>
+//#include <opm-simulators/build/config.h>
 #include <opm/simulators/linalg/MILU.hpp>
 
 #include <dune/common/version.hh>

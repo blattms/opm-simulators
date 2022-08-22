@@ -138,13 +138,18 @@ struct AbsFunctor
 };
   
 */
-template<class M, class F1=IdentityFunctor, class F2=OneFunctor >
-void milu0_decomposition(M& A, F1 absFunctor = F1(), F2 signFunctor = F2(),
+  //template<class M, class F1=IdentityFunctor, class F2=OneFunctor >
+template<class M>
+//void milu0_decomposition(M& A, F1 absFunctor = F1(), F2 signFunctor = F2(),
+void milu_0_decomposition(M& A, std::function<double(double) absFunctor = [](const double& t){if (t< 0){return -1;} else{return 1;}},
+			  std::function<double(double)> signFunctor = [](const double&){return 1.0;},
                          std::vector<typename M::block_type>* diagonal = nullptr);
 
-template<class M>
-auto milu0_decomposition = [](M& A, std::vector<typename M::block_type>* diagona)
- {milu0_decomposition(A, detail::IdentityFunctor(), detail::OneFunctor(), diagonal);};
+template<class M, class T>
+auto milu0_decomposition = [](M& A, std::vector<typename M::block_type>* diagona)    // typo?? diagona-> diagonal?
+ {
+   milu0_decomposition(A, [](const T& t){return t;},[](const double&){return 1.0;}, diagonal);
+ };
 /*void milu0_decomposition(M& A,
                          std::vector<typename M::block_type>* diagonal)
 {
