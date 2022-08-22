@@ -72,27 +72,32 @@ struct RealReorderer : public Reorderer
     const std::vector<std::size_t>* ordering_;
 };
 
+  ///////////// Anto-modifications start here ////////////////////////
+  /*
 struct IdentityFunctor
 {
     template<class T>
-    T operator()(const T& t)
+    auto operator() = [](const T& t){return t;};  // when call it, operator()(<variable type const T& t>)?
+  T operator()(const T& t)
     {
         return t;
-    }
+	}
 };
 
 struct OneFunctor
 {
     template<class T>
-    T operator()(const T&)
+    auto operator()= [](const T&){return 1.0;};
+  T operator()(const T&)
     {
         return 1.0;
-    }
+	}
 };
 struct SignFunctor
 {
     template<class T>
-    double operator()(const T& t)
+    auto operator() = [](const T& t){if (t< 0){return -1;} else{return 1;}};
+     double operator()(const T& t)
     {
         if (t < 0.0)
         {
@@ -102,14 +107,16 @@ struct SignFunctor
         {
             return 1.0;
         }
-    }
+	}
+    
 };
 
 struct IsPositiveFunctor
 {
     template<class T>
-    double operator()(const T& t)
-    {
+    auto operator() = [](const T& t){if (t<0){return 0;} else{return 1;}};
+    /*double operator()(const T& t)
+     {
         if (t < 0.0)
         {
             return 0;
@@ -118,32 +125,36 @@ struct IsPositiveFunctor
         {
             return 1;
         }
-    }
+	}
 };
 struct AbsFunctor
 {
     template<class T>
+    auto operator() = [](const T& t){return std::abs(t);};
     T operator()(const T& t)
     {
         return std::abs(t);
-    }
+	}
 };
-
+  
+*/
 template<class M, class F1=IdentityFunctor, class F2=OneFunctor >
 void milu0_decomposition(M& A, F1 absFunctor = F1(), F2 signFunctor = F2(),
                          std::vector<typename M::block_type>* diagonal = nullptr);
 
 template<class M>
-void milu0_decomposition(M& A,
+auto milu0_decomposition = [](M& A, std::vector<typename M::block_type>* diagona)
+ {milu0_decomposition(A, detail::IdentityFunctor(), detail::OneFunctor(), diagonal);};
+/*void milu0_decomposition(M& A,
                          std::vector<typename M::block_type>* diagonal)
 {
     milu0_decomposition(A, detail::IdentityFunctor(), detail::OneFunctor(),
                         diagonal);
-}
+			}*/
 
 template<class M>
 void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
-                         Reorderer& ordering, Reorderer& inverseOrdering);
+			 Reorderer& ordering, Reorderer& inverseOrdering);     // no changes, it's just a declaration
 
 } // end namespace details
 

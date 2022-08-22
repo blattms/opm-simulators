@@ -55,9 +55,9 @@ MILU_VARIANT convertString2Milu(const std::string& milu)
 namespace detail
 {
 
-template<class M, class F1, class F2>
+template<class M, class F1, class F2> 
 void milu0_decomposition(M& A, F1 absFunctor, F2 signFunctor,
-                         std::vector<typename M::block_type>* diagonal)
+  std::vector<typename M::block_type>* diagonal)
 {
     if( diagonal )
     {
@@ -109,7 +109,7 @@ void milu0_decomposition(M& A, F1 absFunctor, F2 signFunctor,
                     {
                         for( const auto& colEntry: row )
                         {
-                            *entry += absFunctor(-colEntry);
+			   *entry += absFunctor(-colEntry);
                         }
                         ++entry;
                     }
@@ -125,7 +125,7 @@ void milu0_decomposition(M& A, F1 absFunctor, F2 signFunctor,
         for(const auto& entry: sum_dropped)
         {
             auto& bdiag = (*a_ik)[index][index];
-            bdiag += signFunctor(bdiag) * entry;
+	    bdiag += signFunctor(bdiag) * entry;
             ++index;
         }
 
@@ -217,16 +217,23 @@ void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
         detail::milu0_decomposition ( ILU);
         break;
     case MILU_VARIANT::MILU_2:
-        detail::milu0_decomposition ( ILU, detail::IdentityFunctor(),
-                                      detail::SignFunctor() );
+      detail::milu0_decomposition ( ILU, [](const T& t){return t;}, 
+                                      [](const T& t){if (t< 0){return -1;} else{return 1;}});  
+      /*OLD: detail::milu0_decomposition ( ILU, detail::IdentityFunctor(),
+                                      detail::SignFunctor() );  */
+      
         break;
     case MILU_VARIANT::MILU_3:
-        detail::milu0_decomposition ( ILU, detail::AbsFunctor(),
-                                      detail::SignFunctor() );
+        detail::milu0_decomposition ( ILU,[](const T& t){return std::abs(t);},
+                                      [](const T& t){if (t< 0){return -1;} else{return 1;}});
+	/*OLD:  detail::milu0_decomposition ( ILU, detail::AbsFunctor(),
+                                      detail::SignFunctor() );*/
         break;
     case MILU_VARIANT::MILU_4:
-        detail::milu0_decomposition ( ILU, detail::IdentityFunctor(),
-                                      detail::IsPositiveFunctor() );
+        detail::milu0_decomposition ( ILU,[](const T& t){return t;} ,
+                                      [](const T& t){if (t<0){return 0;} else{return 1;}});
+	/* OLD: detail::milu0_decomposition ( ILU, detail::IdentityFunctor(),
+	                              detail::IsPositiveFunctor() );*/
         break;
     default:
 #if DUNE_VERSION_LT(DUNE_GRID, 2, 8)
