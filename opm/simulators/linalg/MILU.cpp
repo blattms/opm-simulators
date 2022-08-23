@@ -32,11 +32,11 @@
 
 #include <array>
 
-std::function<double(const double&)> auxFunctors::IdentityFunctor(){return [](const double& t){return t;};};
-std::function<double(const double&)> auxFunctors::OneFunctor(){return [](const double&){return 1.0;};};
-std::function<double(const double&)> auxFunctors::SignFunctor(){return [](const double& t){if (t< 0){return -1;} else{return 1;}};};
-std::function<double(const double&)> auxFunctors::IsPositiveFunctor(){return [](const double& t){if (t<0){return 0;} else{return 1;}};}
-std::function<double(const double&)> auxFunctors::AbsFunctor(){return [](const double& t){return std::abs(t);};};
+std::function<double(const double&)> Opm::detail::AuxFunctors::identityFunctor(){return [](const double& t){return t;};};
+std::function<double(const double&)> Opm::detail::AuxFunctors::oneFunctor(){return [](const double&){return 1.0;};};
+std::function<double(const double&)> Opm::detail::AuxFunctors::signFunctor(){return [](const double& t){if (t< 0){return -1;} else{return 1;}};};
+std::function<double(const double&)> Opm::detail::AuxFunctors::isPositiveFunctor(){return [](const double& t){if (t<0){return 0;} else{return 1;}};}
+std::function<double(const double&)> Opm::detail::AuxFunctors::absFunctor(){return [](const double& t){return std::abs(t);};};
 
 namespace Opm
 {
@@ -223,23 +223,17 @@ void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
         detail::milu0_decomposition ( ILU);
         break;
     case MILU_VARIANT::MILU_2:
-      detail::milu0_decomposition ( ILU, auxFunctors::IdentityFunctor(),
-				    auxFunctors::SignFunctor()); 
-      /*OLD: detail::milu0_decomposition ( ILU, detail::IdentityFunctor(),
-                                      detail::SignFunctor() );  */
-      
+      detail::milu0_decomposition ( ILU, AuxFunctors::identityFunctor(),
+				    AuxFunctors::signFunctor()); 
+     
         break;
     case MILU_VARIANT::MILU_3:
-      detail::milu0_decomposition ( ILU, auxFunctors::AbsFunctor(),
-				    auxFunctors::SignFunctor());
-	/*OLD:  detail::milu0_decomposition ( ILU, detail::AbsFunctor(),
-                                      detail::SignFunctor() );*/
+      detail::milu0_decomposition ( ILU, AuxFunctors::absFunctor(),
+				    AuxFunctors::signFunctor());
         break;
     case MILU_VARIANT::MILU_4:
-      detail::milu0_decomposition ( ILU, auxFunctors::IdentityFunctor() ,
-				    auxFunctors::IsPositiveFunctor());
-	/* OLD: detail::milu0_decomposition ( ILU, detail::IdentityFunctor(),
-	                              detail::IsPositiveFunctor() );*/
+      detail::milu0_decomposition ( ILU, AuxFunctors::identityFunctor() ,
+				    AuxFunctors::isPositiveFunctor());
         break;
     default:
 #if DUNE_VERSION_LT(DUNE_GRID, 2, 8)
