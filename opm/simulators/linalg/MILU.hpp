@@ -38,11 +38,7 @@ public:
   static std::function<double(const double&)> AbsFunctor(); 
 };
 
-std::function<double(const double&)> auxFunctors::IdentityFunctor(){return [](const double& t){return t;};};
-std::function<double(const double&)> auxFunctors::OneFunctor(){return [](const double&){return 1.0;};};
-std::function<double(const double&)> auxFunctors::SignFunctor(){return [](const double& t){if (t< 0){return -1;} else{return 1;}};};
-std::function<double(const double&)> auxFunctors::IsPositiveFunctor(){return [](const double& t){if (t<0){return 0;} else{return 1;}};}
-std::function<double(const double&)> auxFunctors::AbsFunctor(){return [](const double& t){return std::abs(t);};};
+
 
  
 

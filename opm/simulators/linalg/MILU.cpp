@@ -32,7 +32,11 @@
 
 #include <array>
 
-
+std::function<double(const double&)> auxFunctors::IdentityFunctor(){return [](const double& t){return t;};};
+std::function<double(const double&)> auxFunctors::OneFunctor(){return [](const double&){return 1.0;};};
+std::function<double(const double&)> auxFunctors::SignFunctor(){return [](const double& t){if (t< 0){return -1;} else{return 1;}};};
+std::function<double(const double&)> auxFunctors::IsPositiveFunctor(){return [](const double& t){if (t<0){return 0;} else{return 1;}};}
+std::function<double(const double&)> auxFunctors::AbsFunctor(){return [](const double& t){return std::abs(t);};};
 
 namespace Opm
 {
@@ -57,8 +61,8 @@ MILU_VARIANT convertString2Milu(const std::string& milu)
 namespace detail
 {
 
-template<class M, class F1, class F2> 
-void milu0_decomposition(M& A, F1 absFunctor, F2 signFunctor,
+template<class M> 
+void milu0_decomposition(M& A, std::function<double(const double&)> absFunctor, std::function<double(const double&)> signFunctor,
   std::vector<typename M::block_type>* diagonal)
 {
     if( diagonal )
@@ -248,7 +252,7 @@ void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
 }
 
 #define INSTANCE(F1,F2,...) \
-    template void milu0_decomposition<__VA_ARGS__, F1, F2> \
+    template void milu0_decomposition<__VA_ARGS__, std::function<double(const double&)>, std::function<double(const double&)>> \
                                      (__VA_ARGS__&, F1, F2, \
                                       std::vector<typename __VA_ARGS__::block_type>*);
 
@@ -257,10 +261,10 @@ void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
                                       __VA_ARGS__&,Reorderer&,Reorderer&);
 
 #define INSTANCE_FULL(...) \
-    INSTANCE(auxFunctors::AbsFunctor,auxFunctors::SignFunctor,__VA_ARGS__) \
-    INSTANCE(auxFunctors::IdentityFunctor,auxFunctors::IsPositiveFunctor,__VA_ARGS__) \
-    INSTANCE(auxFunctors::IdentityFunctor,auxFunctors::OneFunctor,__VA_ARGS__) \
-    INSTANCE(auxFunctors::IdentityFunctor,auxFunctors::SignFunctor,__VA_ARGS__) \
+    INSTANCE(AbsFunctor,SignFunctor,__VA_ARGS__) \
+    INSTANCE(IdentityFunctor,IsPositiveFunctor,__VA_ARGS__) \
+    INSTANCE(IdentityFunctor,OneFunctor,__VA_ARGS__) \
+    INSTANCE(IdentityFunctor,SignFunctor,__VA_ARGS__) \
     INSTANCE_ILUN(__VA_ARGS__)
 
 #define INSTANCE_BLOCK(Dim) \
