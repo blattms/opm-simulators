@@ -19,7 +19,6 @@
 */
 
 #include <config.h>
-//#include <opm-simulators/build/config.h>
 #include <opm/simulators/linalg/MILU.hpp>
 
 #include <dune/common/version.hh>
@@ -218,21 +217,21 @@ void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
         detail::milu0_decomposition ( ILU);
         break;
     case MILU_VARIANT::MILU_2:
-      detail::milu0_decomposition ( ILU, [](const T& t){return t;}, 
-                                      [](const T& t){if (t< 0){return -1;} else{return 1;}});  
+      detail::milu0_decomposition ( ILU, auxiliaryFunctors::IdentityFunctor(),
+				    auxiliaryFunctors::SignFunctor()); 
       /*OLD: detail::milu0_decomposition ( ILU, detail::IdentityFunctor(),
                                       detail::SignFunctor() );  */
       
         break;
     case MILU_VARIANT::MILU_3:
-        detail::milu0_decomposition ( ILU,[](const T& t){return std::abs(t);},
-                                      [](const T& t){if (t< 0){return -1;} else{return 1;}});
+      detail::milu0_decomposition ( ILU, auxiliaryFunctors::AbsFunctor(),
+				    auxiliaryFunctors::SignFunctor());
 	/*OLD:  detail::milu0_decomposition ( ILU, detail::AbsFunctor(),
                                       detail::SignFunctor() );*/
         break;
     case MILU_VARIANT::MILU_4:
-        detail::milu0_decomposition ( ILU,[](const T& t){return t;} ,
-                                      [](const T& t){if (t<0){return 0;} else{return 1;}});
+      detail::milu0_decomposition ( ILU,auxiliaryFunctors::IdentityFunctor() ,
+				    auxiliaryFunctors::IsPositiveFunctor();
 	/* OLD: detail::milu0_decomposition ( ILU, detail::IdentityFunctor(),
 	                              detail::IsPositiveFunctor() );*/
         break;
