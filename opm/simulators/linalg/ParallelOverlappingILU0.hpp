@@ -37,6 +37,21 @@
 #include <cstddef>
 #include <string>
 
+////////////////////////////////////////////////////
+
+
+  
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////
+
 namespace Opm
 {
 
@@ -136,6 +151,71 @@ namespace Opm
 {
     namespace detail
     {
+      struct IdentityFunctor
+      {
+	template<class T>
+	// auto operator() = [](const T& t){return t;};  // when call it, operator()(<variable type const T& t>)?
+	T operator()(const T& t)
+	{
+	  return t;
+	}
+      };
+
+      struct OneFunctor
+      {
+	template<class T>
+	//  auto operator()= [](const T&){return 1.0;};
+	T operator()(const T&)
+	{
+	  return 1.0;
+	}
+      };
+      struct SignFunctor
+      {
+	template<class T>
+	// auto operator() = [](const T& t){if (t< 0){return -1;} else{return 1;}};
+	double operator()(const T& t)
+	{
+	  if (t < 0.0)
+	    {
+	      return -1;
+	    }
+	  else
+	    {
+	      return 1.0;
+	    }
+	}
+    
+      };
+
+      struct IsPositiveFunctor
+      {
+	template<class T>
+	// auto operator() = [](const T& t){if (t<0){return 0;} else{return 1;}};
+	double operator()(const T& t)
+	{
+	  if (t < 0.0)
+	    {
+	      return 0;
+	    }
+	  else
+	    {
+	      return 1;
+	    }
+	}
+      };
+      struct AbsFunctor
+      {
+	template<class T>
+	//auto operator() = [](const T& t){return std::abs(t);};
+	T operator()(const T& t)
+	{
+	  return std::abs(t);
+	}
+      };
+
+
+      
     //! Compute Blocked ILU0 decomposition, when we know junk ghost rows are located at the end of A
     template<class M>
     void ghost_last_bilu0_decomposition (M& A, size_t interiorSize)

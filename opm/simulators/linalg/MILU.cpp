@@ -251,9 +251,9 @@ void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
     }
 }
 
-#define INSTANCE(F1,F2,...) \
-    template void milu0_decomposition<__VA_ARGS__, std::function<double(const double&)>, std::function<double(const double&)>> \
-                                     (__VA_ARGS__&, F1, F2, \
+#define INSTANCE(...) \
+    template void milu0_decomposition<__VA_ARGS__> \
+    (__VA_ARGS__&,std::function<double(const double&)>, std::function<double(const double&)>, \
                                       std::vector<typename __VA_ARGS__::block_type>*);
 
 #define INSTANCE_ILUN(...) \
@@ -261,10 +261,7 @@ void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
                                       __VA_ARGS__&,Reorderer&,Reorderer&);
 
 #define INSTANCE_FULL(...) \
-    INSTANCE(AbsFunctor,SignFunctor,__VA_ARGS__) \
-    INSTANCE(IdentityFunctor,IsPositiveFunctor,__VA_ARGS__) \
-    INSTANCE(IdentityFunctor,OneFunctor,__VA_ARGS__) \
-    INSTANCE(IdentityFunctor,SignFunctor,__VA_ARGS__) \
+    INSTANCE(__VA_ARGS__) \
     INSTANCE_ILUN(__VA_ARGS__)
 
 #define INSTANCE_BLOCK(Dim) \
