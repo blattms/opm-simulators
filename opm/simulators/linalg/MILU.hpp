@@ -48,7 +48,7 @@ MILU_VARIANT convertString2Milu(const std::string& milu);
 
   namespace detail 
 {
-  class AuxFunctors
+  /*  class AuxFunctors
 {
 public:
   static std::function<double(const double&)> identityFunctor(); 
@@ -56,7 +56,27 @@ public:
   static std::function<double(const double&)> signFunctor(); 
   static std::function<double(const double&)> isPositiveFunctor(); 
   static std::function<double(const double&)> absFunctor(); 
-};
+  };*/
+  
+  template <typename T>
+  T identityFunctor(const T&);
+  //std::function<T(const T&)> identityFunctor();
+
+  template <typename T>
+  T oneFunctor(const T&);
+  // std::function<T(const T&)> oneFunctor();
+
+  template <typename T>
+  T signFunctor(const T&);
+  // std::function<T(const T&)> signFunctor();
+
+  template <typename T>
+  T isPositiveFunctor(const T&);
+  // std::function<T(const T&)> isPositiveFunctor();
+
+  template <typename T>
+  T absFunctor(const T&);
+  // std::function<T(const T&)> absFunctor();
 
 struct Reorderer
 {
@@ -86,14 +106,14 @@ struct RealReorderer : public Reorderer
 
   
 template<class M>
-void milu0_decomposition(M& A, std::function<double(const double&)> absFunctor = AuxFunctors::signFunctor(),
-			  std::function<double(const double&)> signFunctor = AuxFunctors::oneFunctor(),
+void milu0_decomposition(M& A, double absFunctor(const double&) = signFunctor<Opm::detail<double>>(const double&),
+			 double signFunctor(const double&) = oneFunctor<Opm::detail<double>>(const double&),
                          std::vector<typename M::block_type>* diagonal = nullptr);
 
 template<class M>
 void  milu0_decomposition(M& A, std::vector<typename M::block_type>* diagonal)    
  {
-   milu0_decomposition(A, AuxFunctors::identityFunctor(), AuxFunctors::oneFunctor(), diagonal);
+   milu0_decomposition(A, identityFunctor<Opm::detail<double>>(const double&), oneFunctor<Opm::detail<double>>(const double&), diagonal);
  };
 
 

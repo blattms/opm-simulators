@@ -32,11 +32,20 @@
 
 #include <array>
 
-std::function<double(const double&)> Opm::detail::AuxFunctors::identityFunctor(){return [](const double& t){return t;};};
-std::function<double(const double&)> Opm::detail::AuxFunctors::oneFunctor(){return [](const double&){return 1.0;};};
-std::function<double(const double&)> Opm::detail::AuxFunctors::signFunctor(){return [](const double& t){if (t< 0){return -1;} else{return 1;}};};
-std::function<double(const double&)> Opm::detail::AuxFunctors::isPositiveFunctor(){return [](const double& t){if (t<0){return 0;} else{return 1;}};}
-std::function<double(const double&)> Opm::detail::AuxFunctors::absFunctor(){return [](const double& t){return std::abs(t);};};
+template <typename T>
+T Opm::detail::identityFunctor(const T& t){return t;};
+
+template <typename T>
+T Opm::detail::oneFunctor(const T&){return 1.0;};
+
+template <typename T>
+T Opm::detail::signFunctor(const T& t){if (t< 0){return -1;} else{return 1;}};
+
+template <typename T>
+T Opm::detail::isPositiveFunctor(const T& t){if (t<0){return 0;} else{return 1;}};
+
+template <typename T>
+T Opm::detail::absFunctor(const T& t){return std::abs(t);};
 
 namespace Opm
 {
@@ -223,17 +232,17 @@ void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
         detail::milu0_decomposition ( ILU);
         break;
     case MILU_VARIANT::MILU_2:
-      detail::milu0_decomposition ( ILU, AuxFunctors::identityFunctor(),
-				    AuxFunctors::signFunctor()); 
+      detail::milu0_decomposition ( ILU, identityFunctor<double>(),
+				    signFunctor<double>()); 
      
         break;
     case MILU_VARIANT::MILU_3:
-      detail::milu0_decomposition ( ILU, AuxFunctors::absFunctor(),
-				    AuxFunctors::signFunctor());
+      detail::milu0_decomposition ( ILU, absFunctor<double>(),
+				    signFunctor<double>());
         break;
     case MILU_VARIANT::MILU_4:
-      detail::milu0_decomposition ( ILU, AuxFunctors::identityFunctor() ,
-				    AuxFunctors::isPositiveFunctor());
+      detail::milu0_decomposition ( ILU, identityFunctor<double>() ,
+				    isPositiveFunctor<double>());
         break;
     default:
 #if DUNE_VERSION_LT(DUNE_GRID, 2, 8)
@@ -244,6 +253,13 @@ void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
         break;
     }
 }
+
+
+template double Opm::detail::identityFunctor(const double&);
+template double Opm::detail::oneFunctor(const double&);
+template double Opm::detail::signFunctor(const double&);
+template double Opm::detail::isPositiveFunctor(const double&);
+template double Opm::detail::absFunctor(const double&);
 
 #define INSTANCE(...) \
     template void milu0_decomposition<__VA_ARGS__> \
