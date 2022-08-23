@@ -24,10 +24,11 @@
 #include <cstddef>
 #include <string>
 #include <vector>
+#include <functional>  // so we can use std::function
 
 
 
-class auxiliaryFunctors
+class auxFunctors
 {
 public:
   static std::function<double(const double&)> IdentityFunctor(); 
@@ -37,16 +38,11 @@ public:
   static std::function<double(const double&)> AbsFunctor(); 
 };
 
-//std::function<double(const double&)>
-static std::function<double(const double&)> auxiliaryFunctors::IdentityFunctor(const double& t){return t;};
-//std::function<double(const double&)> 
-static std::function<double(const double&)> auxiliaryFunctors::OneFunctor(const double&){return 1.0;};
-//std::function<double(const double&)>
-static std::function<double(const double&)> auxiliaryFunctors::SignFunctor(const double& t){if (t< 0){return -1;} else{return 1;}};
-//std::function<double(const double&)> 
-static std::function<double(const double&)> auxiliaryFunctors::IsPositiveFunctor(const double& t){if (t<0){return 0;} else{return 1;}};
-//std::function<double(const double&)>
-static std::function<double(const double&)> auxiliaryFunctors::AbsFunctor(const double& t){return std::abs(t);};
+std::function<double(const double&)> auxFunctors::IdentityFunctor(){return [](const double& t){return t;};};
+std::function<double(const double&)> auxFunctors::OneFunctor(){return [](const double&){return 1.0;};};
+std::function<double(const double&)> auxFunctors::SignFunctor(){return [](const double& t){if (t< 0){return -1;} else{return 1;}};};
+std::function<double(const double&)> auxFunctors::IsPositiveFunctor(){return [](const double& t){if (t<0){return 0;} else{return 1;}};}
+std::function<double(const double&)> auxFunctors::AbsFunctor(){return [](const double& t){return std::abs(t);};};
 
  
 
@@ -69,7 +65,7 @@ enum class MILU_VARIANT{
 MILU_VARIANT convertString2Milu(const std::string& milu);
 
 
-  namespace detail  // : public auxiliaryFunctors
+  namespace detail // : public auxFunctors
 {
 
 struct Reorderer
@@ -98,92 +94,22 @@ struct RealReorderer : public Reorderer
     const std::vector<std::size_t>* ordering_;
 };
 
-  ///////////// Anto-modifications start here ////////////////////////
-  /*
-struct IdentityFunctor
-{
-    template<class T>
-    auto operator() = [](const T& t){return t;};  // when call it, operator()(<variable type const T& t>)?
-  T operator()(const T& t)
-    {
-        return t;
-	}
-};
-
-struct OneFunctor
-{
-    template<class T>
-    auto operator()= [](const T&){return 1.0;};
-  T operator()(const T&)
-    {
-        return 1.0;
-	}
-};
-struct SignFunctor
-{
-    template<class T>
-    auto operator() = [](const T& t){if (t< 0){return -1;} else{return 1;}};
-     double operator()(const T& t)
-    {
-        if (t < 0.0)
-        {
-            return -1;
-        }
-        else
-        {
-            return 1.0;
-        }
-	}
-    
-};
-
-struct IsPositiveFunctor
-{
-    template<class T>
-    auto operator() = [](const T& t){if (t<0){return 0;} else{return 1;}};
-    double operator()(const T& t)
-     {
-        if (t < 0.0)
-        {
-            return 0;
-        }
-        else
-        {
-            return 1;
-        }
-	}
-};
-struct AbsFunctor
-{
-    template<class T>
-    auto operator() = [](const T& t){return std::abs(t);};
-    T operator()(const T& t)
-    {
-        return std::abs(t);
-	}
-};
   
-*/
-  
-  //template<class M, class F1=IdentityFunctor, class F2=OneFunctor >
- template<class M>
-//void milu0_decomposition(M& A, F1 absFunctor = F1(), F2 signFunctor = F2(),
- void milu0_decomposition(M& A, std::function<double(double)> absFunctor = auxiliaryFunctors::SignFunctor(),
-			  std::function<double(double)> signFunctor = auxiliaryFunctors::OneFunctor(),
+template<class M>
+void milu0_decomposition(M& A, std::function<double(const double&)> absFunctor = auxFunctors::SignFunctor(),
+			  std::function<double(const double&)> signFunctor = auxFunctors::OneFunctor(),
                          std::vector<typename M::block_type>* diagonal = nullptr);
 
 template<class M>
 void  milu0_decomposition(M& A, std::vector<typename M::block_type>* diagonal)    
  {
-   milu0_decomposition(A, auxiliaryFunctors::IdentityFunctor(), auxiliaryFunctors::OneFunctor(), diagonal);
+   milu0_decomposition(A, auxFunctors::IdentityFunctor(), auxFunctors::OneFunctor(), diagonal);
  };
-/*
-{ milu0_decomposition(A, detail::IdentityFunctor(), detail::OneFunctor(),
-                        diagonal); }*/
+
 
 template<class M>
 void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
-			 Reorderer& ordering, Reorderer& inverseOrdering);     // no changes, it's just a declaration
+			 Reorderer& ordering, Reorderer& inverseOrdering);    
 
 } // end namespace details
 
