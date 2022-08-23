@@ -33,19 +33,19 @@
 #include <array>
 
 template <typename T>
-std::function<T(const T&)> Opm::detail::identityFunctor(const T& t){return t;};
+T Opm::detail::identityFunctor(const T& t){return t;};
 
 template <typename T>
-std::function<T(const T&)> Opm::detail::oneFunctor(const T&){return 1.0;};
+T Opm::detail::oneFunctor(const T&){return 1.0;};
 
 template <typename T>
-std::function<T(const T&)>  Opm::detail::signFunctor(const T& t){if (t< 0){return -1;} else{return 1;}};
+T Opm::detail::signFunctor(const T& t){if (t< 0){return -1;} else{return 1;}};
 
 template <typename T>
-std::function<T(const T&)>  Opm::detail::isPositiveFunctor(const T& t){if (t<0){return 0;} else{return 1;}};
+T Opm::detail::isPositiveFunctor(const T& t){if (t<0){return 0;} else{return 1;}};
 
 template <typename T>
-std::function<T(const T&)>  Opm::detail::absFunctor(const T& t){return std::abs(t);};
+T Opm::detail::absFunctor(const T& t){return std::abs(t);};
 
 namespace Opm
 {
@@ -229,7 +229,7 @@ void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
     switch ( milu )
     {
     case MILU_VARIANT::MILU_1:
-        detail::milu0_decomposition ( ILU);
+        detail::milu0_decomposition ( ILU );
         break;
     case MILU_VARIANT::MILU_2:
       detail::milu0_decomposition ( ILU, identityFunctor<double>,
@@ -254,12 +254,13 @@ void milun_decomposition(const M& A, int n, MILU_VARIANT milu, M& ILU,
     }
 }
 
-
+/*
   template std::function<double(const double&)> identityFunctor;
   template std::function<double(const double&)> oneFunctor;
   template std::function<double(const double&)> signFunctor;
   template std::function<double(const double&)> isPositiveFunctor;
   template std::function<double(const double&)> absFunctor;
+*/
 
 #define INSTANCE(...) \
     template void milu0_decomposition<__VA_ARGS__> \

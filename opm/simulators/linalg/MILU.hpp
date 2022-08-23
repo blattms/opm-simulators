@@ -59,24 +59,19 @@ public:
   };*/
   
   template <typename T>
-  //T identityFunctor(const T&);
-  std::function<T(const T&)> identityFunctor();
+  T identityFunctor(const T&);
 
   template <typename T>
-  //T oneFunctor(const T&);
-  std::function<T(const T&)> oneFunctor();
+  T oneFunctor(const T&);
 
   template <typename T>
-  //T signFunctor(const T&);
-  std::function<T(const T&)> signFunctor();
+  T signFunctor(const T&);
 
   template <typename T>
-  //T isPositiveFunctor(const T&);
-  std::function<T(const T&)> isPositiveFunctor();
+  T isPositiveFunctor(const T&);
 
   template <typename T>
-  // T absFunctor(const T&);
-  std::function<T(const T&)> absFunctor();
+  T absFunctor(const T&);
 
 struct Reorderer
 {
