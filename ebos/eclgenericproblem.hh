@@ -284,6 +284,11 @@ public:
         serializer(mixControls_);
     }
 
+    auto getLookUpData() const
+    {
+        return lookUpData_;
+    }
+
 protected:
     void initFluidSystem_();
 

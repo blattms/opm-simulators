@@ -2036,6 +2036,7 @@ protected:
             thermalLawManager_->initParamsForElements(eclState, this->model().numGridDof(),
                                                       this-> fieldPropDoubleOnLeafAssigner_(),
                                                       this-> template fieldPropIntTypeOnLeafAssigner_<unsigned int>());
+
         }
     }
 
