@@ -284,6 +284,11 @@ public:
         serializer(mixControls_);
     }
 
+    auto getLookUpData() const
+    {
+        return lookUpData_;
+    }
+
 protected:
     void initFluidSystem_();
 
@@ -384,6 +389,20 @@ protected:
     std::function<unsigned(unsigned)> lookupIdxOnLevelZeroAssigner_()
     {
         return [this](unsigned elemIdx) { return lookUpData_.template getFieldPropIdx<Grid>(elemIdx);};
+    }
+    
+    std::vector<double> getAssignDoubleOnLeaf(const FieldPropsManager& fieldPropManager,
+                                              const std::string& propString, const unsigned int& numElems) const
+    {
+        return lookUpData_.assignFieldPropsDoubleOnLeaf(fieldPropManager, propString, numElems);
+    }
+
+    std::vector<unsigned int> getAssignIntOnLeaf(const FieldPropsManager& fieldPropManager,
+                                                 const std::string& propString,
+                                                 const unsigned int& numElems, bool needsTranslation) const
+    {
+        return lookUpData_.template assignFieldPropsIntOnLeaf<unsigned int>(fieldPropManager, propString, numElems,
+                                                                            needsTranslation);
     }
 
 private:
