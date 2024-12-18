@@ -40,6 +40,28 @@
 #include <HYPRE_utilities.h>
 #endif
 
+#if HAVE_MPI
+class MPIError {
+public:
+  /** @brief Constructor. */
+  MPIError(std::string s, int e) : errorstring(s), errorcode(e){}
+  /** @brief The error string. */
+  std::string errorstring;
+  /** @brief The mpi error code. */
+  int errorcode;
+};
+
+void MPI_err_handler(MPI_Comm *, int *err_code, ...){
+  char *err_string=new char[MPI_MAX_ERROR_STRING];
+  int err_length;
+  MPI_Error_string(*err_code, err_string, &err_length);
+  std::string s(err_string, err_length);
+  std::cerr << "An MPI Error ocurred:"<<std::endl<<s<<std::endl;
+  delete[] err_string;
+  throw MPIError(s, *err_code);
+}
+#endif
+
 namespace Opm {
 
 Main::Main(int argc, char** argv, bool ownMPI)
@@ -153,6 +175,11 @@ void Main::initMPI()
         MPI_Init(&argc_, &argv_);
     }
 #endif
+#if HAVE_MPI
+    MPI_Comm_create_errhandler(MPI_err_handler, &handler_);
+    MPI_Comm_set_errhandler(MPI_COMM_WORLD, handler_);
+#endif
+
     FlowGenericVanguard::setCommunication(std::make_unique<Parallel::Communication>());
 
     handleTestSplitCommunicatorCmdLine_();

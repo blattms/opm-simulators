@@ -773,6 +773,9 @@ private:
 #if HAVE_DAMARIS
     bool enableDamarisOutput_ = false;
 #endif
+#if HAVE_MPI
+    MPI_Errhandler handler_;
+#endif
 };
 
 } // namespace Opm
