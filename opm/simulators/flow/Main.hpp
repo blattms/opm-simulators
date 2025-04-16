@@ -61,6 +61,9 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
+#include <cstdio>
+#include <cstdlib>
+#include <signal.h>
 
 namespace Opm::Properties {
 
@@ -80,10 +83,19 @@ namespace Action { class State; }
 class UDQState;
 class WellTestState;
 
+inline void signal_callback_handler(int signum)
+ {
+	   printf("Caught signal %d\n",signum);
+           int wait=1;
+           while (wait)
+               sleep(1);
+	   exit(signum);
+	}
 // ----------------- Main program -----------------
 template <class TypeTag>
 int flowMain(int argc, char** argv, bool outputCout, bool outputFiles)
 {
+    signal(SIGFPE, signal_callback_handler);
     // we always want to use the default locale, and thus spare us the trouble
     // with incorrect locale settings.
     resetLocale();

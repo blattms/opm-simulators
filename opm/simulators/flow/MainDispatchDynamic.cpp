@@ -56,13 +56,26 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <cstdio>
+#include <cstdlib>
+#include <signal.h>
 
 // ---------------------------------------------------------------------------
 // Implementation of dispatchDynamic_()
 // ---------------------------------------------------------------------------
 
+inline void signal_callback_handler(int signum)
+ {
+     printf("Caught signal %d\n",signum);
+     int wait=1;
+     while (wait)
+         sleep(1);
+     exit(signum);
+ }
+
 int Opm::Main::dispatchDynamic_()
 {
+    signal(SIGFPE, signal_callback_handler);
     const auto& rspec = this->eclipseState_->runspec();
     const auto& phases = rspec.phases();
 

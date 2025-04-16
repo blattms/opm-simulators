@@ -49,13 +49,26 @@
 #include <fcntl.h>  // for open()
 #include <unistd.h> // for dup2(), close()
 
+#include <fpu_control.h>
+#include <fenv.h>
 #include <iostream>
-
 namespace Opm {
+
+void activate_and_set_signal()
+{
+    fenv_t newval;
+    fegetenv(&newval);
+    feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+    newval.__control_word &= (FE_INVALID|FE_DIVBYZERO|FE_OVERFLOW);
+    //fesetenv(&newval);
+    std::cout<<"setting signal"<<std::endl;
+    signal(SIGFPE, signal_callback_handler);
+}
 
 Main::Main(int argc, char** argv, bool ownMPI)
     : argc_(argc), argv_(argv), ownMPI_(ownMPI)
 {
+    activate_and_set_signal();
 #if HAVE_MPI
     maybeSaveReservoirCouplingSlaveLogFilename_();
 #endif
@@ -68,6 +81,7 @@ Main::Main(const std::string& filename, bool mpi_init, bool mpi_finalize)
     : mpi_init_{mpi_init}
     , mpi_finalize_{mpi_finalize}
 {
+    activate_and_set_signal();
     setArgvArgc_(filename);
     initMPI();
 }
@@ -84,6 +98,7 @@ Main::Main(const std::string& filename,
     , mpi_init_{mpi_init}
     , mpi_finalize_{mpi_finalize}
 {
+    activate_and_set_signal();
     setArgvArgc_(filename);
     initMPI();
 }
