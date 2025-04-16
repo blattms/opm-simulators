@@ -285,7 +285,8 @@ computeDensities(const std::vector<Scalar>& perfComponentRates,
             volrat += phaseMixture    [comp] / b    [comp];
         }
 
-        rho /= volrat;
+        if (rho != Scalar()) // prevent division by zero if there is no mixture
+            rho /= volrat;
     }
 }
 
