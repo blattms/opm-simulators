@@ -7,8 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#pragma GCC push_options
-#pragma GCC target("avx2")
 
 bslv_memory *bslv_alloc()
 {
@@ -254,7 +252,7 @@ int bslv_pbicgstab3d(bslv_memory *mem, bsr_matrix *A, const double *b, double *x
 }
 
 
-#pragma GCC pop_options
+
 
 
 

@@ -3,9 +3,6 @@
 #include <stdio.h>
 #include <immintrin.h>
 
-#pragma GCC push_options
-#pragma GCC target("avx2")
-
 
 prec_t *prec_alloc()
 {
@@ -625,4 +622,3 @@ void prec_info(prec_t *P)
     bsr_info(P->D);
     bsr_info(P->U);
 }
-#pragma GCC pop_options

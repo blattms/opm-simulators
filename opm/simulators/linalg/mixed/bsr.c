@@ -6,8 +6,6 @@
 
 #include <immintrin.h>
 
-#pragma GCC push_options
-#pragma GCC target("avx2")
 
 bsr_matrix* bsr_alloc()
 {
@@ -198,6 +196,4 @@ void bsr_nonzeros(bsr_matrix *A, const char *name)
     }
     printf("]\n");
 }
-
-#pragma GCC pop_options
 

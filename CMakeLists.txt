@@ -750,12 +750,11 @@ endif()
 
 add_custom_target(extra_test ${CMAKE_CTEST_COMMAND} -C ExtraTests)
 
-# must link libraries after target 'opmsimulators' has been defined
-
-if(HAVE_AVX2_EXTENSIONS)
-  target_compile_options(opmsimulators
-    ${AVX2_FLAGS})
+# must activate avx2 flags for mixed precision.
+if(HAVE_AVX2_EXTENSION)
+  set_property(SOURCE ${AVX2_SOURCE_FILES} PROPERTY COMPILE_FLAGS ${AVX2_FLAGS})
 endif()
+
 if(CUDA_FOUND)
   if (NOT USE_HIP)
     target_link_libraries(opmsimulators
